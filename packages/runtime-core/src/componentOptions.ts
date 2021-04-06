@@ -60,6 +60,7 @@ import { warn } from './warning'
 import { VNodeChild } from './vnode'
 import { callWithAsyncErrorHandling } from './errorHandling'
 import { UnionToIntersection } from './helpers/typeUtils'
+import { deepMergeData } from './compat/data'
 
 /**
  * Interface for declaring custom options.
@@ -899,7 +900,11 @@ function resolveData(
     instance.data = reactive(data)
   } else {
     // existing data: this is a mixin or extends.
-    extend(instance.data, data)
+    if (__COMPAT__) {
+      deepMergeData(instance.data, data)
+    } else {
+      extend(instance.data, data)
+    }
   }
 }
 
